@@ -116,6 +116,7 @@ fn count_greater_eq(data: &[u64], key: u64) -> usize {
 }
 
 #[repr(C)]
+#[no_mangle]
 pub struct Fast64 {
     leaf_layer: Vec<u64>,
     internal_layers: Vec<Vec<u64>>,
@@ -231,6 +232,7 @@ impl Fast64 {
 }
 
 // C API
+#[no_mangle]
 pub extern "C" fn create_fast64(keys: *const u64, num_keys: u64,
                                 values: *const u64, num_values: u64)
                                 -> *const Fast64 {
@@ -243,6 +245,7 @@ pub extern "C" fn create_fast64(keys: *const u64, num_keys: u64,
     return Box::into_raw(Box::new(Fast64::new(key_vec, val_vec)));
 }
 
+#[no_mangle]
 pub extern "C" fn lookup_fast64(tree: *const Fast64, key: u64,
                                 out1: *mut u64, out2: *mut u64) {
     let tree_ref = unsafe { &*tree };
@@ -254,6 +257,7 @@ pub extern "C" fn lookup_fast64(tree: *const Fast64, key: u64,
     }
 }
 
+#[no_mangle]
 pub extern "C" fn destroy_fast64(tree: *mut Fast64) {
     let x = unsafe { Box::from_raw(tree) };
     drop(x);

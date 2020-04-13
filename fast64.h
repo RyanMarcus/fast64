@@ -20,18 +20,18 @@
  
 //pub extern "C" fn create_fast64(keys: *const u64, num_keys: u64,
 //                                values: *const u64, num_values: u64)
-//                                -> *const Fast64Tree
-struct Fast64Tree;
+//                                -> *const Fast64
+struct Fast64;
 
-Fast64Tree* create_fast64(const uint64_t* keys, uint64_t num_keys,
+Fast64* create_fast64(const uint64_t* keys, uint64_t num_keys,
                           const uint64_t* values, uint64_t num_values);
 
 
-//pub extern "C" fn lookup_fast64(tree: *const Fast64Tree, key: u64,
+//pub extern "C" fn lookup_fast64(tree: *const Fast64, key: u64,
 //                                out1: *mut u64, out2: *mut u64)
 
-void lookup_fast64(Fast64Tree* tree, uint64_t key,
-                   uint64_t* out1, uint64_t out2);
+void lookup_fast64(Fast64* tree, uint64_t key,
+                   uint64_t* out1, uint64_t* out2);
 
-//pub extern "C" fn destroy_fast64(tree: *mut Fast64Tree)
-void destroy_fast64(Fast64Tree* tree);
+//pub extern "C" fn destroy_fast64(tree: *mut Fast64)
+void destroy_fast64(Fast64* tree);
