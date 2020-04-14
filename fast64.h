@@ -17,21 +17,22 @@
 // along with fast64.  If not, see <http://www.gnu.org/licenses/>.
 // 
 // < end copyright > 
- 
+extern "C" {
 //pub extern "C" fn create_fast64(keys: *const u64, num_keys: u64,
 //                                values: *const u64, num_values: u64)
 //                                -> *const Fast64
-struct Fast64;
+  struct Fast64;
 
-Fast64* create_fast64(const uint64_t* keys, uint64_t num_keys,
-                          const uint64_t* values, uint64_t num_values);
+  struct Fast64* create_fast64(const uint64_t* keys, uint64_t num_keys,
+                               const uint64_t* values, uint64_t num_values);
 
 
 //pub extern "C" fn lookup_fast64(tree: *const Fast64, key: u64,
 //                                out1: *mut u64, out2: *mut u64)
 
-void lookup_fast64(Fast64* tree, uint64_t key,
-                   uint64_t* out1, uint64_t* out2);
+  void lookup_fast64(struct Fast64* tree, uint64_t key,
+                     uint64_t* out1, uint64_t* out2);
 
 //pub extern "C" fn destroy_fast64(tree: *mut Fast64)
-void destroy_fast64(Fast64* tree);
+  void destroy_fast64(struct Fast64* tree);
+}
