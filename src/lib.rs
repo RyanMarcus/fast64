@@ -263,6 +263,12 @@ pub extern "C" fn destroy_fast64(tree: *mut Fast64) {
     drop(x);
 }
 
+#[no_mangle]
+pub extern "C" fn size_fast64(tree: *mut Fast64) -> u64 {
+    let tree_ref = unsafe { &*tree };
+    return tree_ref.size() as u64;
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
