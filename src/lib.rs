@@ -75,7 +75,6 @@ fn layout<T: FastKey>(
     assert_eq!((CACHE_LINE_SIZE / size_of::<T>()) % 2, 0);
     
     let chunk_size = CACHE_LINE_SIZE / size_of::<T>() / 2;
-    println!("Chunk size: {}", chunk_size);
     return left_vals.chunks(chunk_size)
         .zip(right_vals.chunks(chunk_size))
         .flat_map(|(lchk, rchk)| {
