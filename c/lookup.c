@@ -21,10 +21,10 @@
 #include "lookup.h"
 #include <immintrin.h>
 
-void fast_lookup(const uint64_t** internal_pages, const uint64_t num_internal_pages,
-                 const uint64_t* leaf_page,
-                 const uint64_t query,
-                 uint64_t* const out1, uint64_t* const out2) {
+void fast_lookup64(const uint64_t** internal_pages, const uint64_t num_internal_pages,
+                   const uint64_t* leaf_page,
+                   const uint64_t query,
+                   uint64_t* const out1, uint64_t* const out2) {
   
   // load the key
   int64_t query_as_signed = *(int64_t*)&query;
@@ -51,5 +51,38 @@ void fast_lookup(const uint64_t** internal_pages, const uint64_t num_internal_pa
   } else {
     *out1 = leaf_page[idx + 8 + (gt_count - 1)];
     *out2 = leaf_page[idx + 8 + (gt_count - 1) + 1];
+  }
+}
+
+void fast_lookup32(const uint32_t** internal_pages, const uint32_t num_internal_pages,
+                   const uint32_t* leaf_page,
+                   const uint32_t query,
+                   uint32_t* const out1, uint32_t* const out2) {
+  
+  // load the key
+  int32_t query_as_signed = *(int32_t*)&query;
+  __m512i key = _mm512_set1_epi32(query_as_signed);
+
+  // go down the tree
+  uint64_t idx = 0;
+  for (size_t i = 0; i < num_internal_pages; i++) {
+    __m512i page = _mm512_load_si512(internal_pages[i] + idx);
+    __mmask16 res = _mm512_cmpgt_epu32_mask(key, page);
+    idx = internal_pages[i][idx + 16 + __builtin_popcount(res)];
+  }
+
+  __m512i page = _mm512_load_si512(leaf_page + idx);
+  __mmask16 res = _mm512_cmpge_epu32_mask(key, page);
+  int gt_count = __builtin_popcount(res);
+
+  if (gt_count == 0) {
+    *out1 = leaf_page[idx - 32 + 31];
+    *out2 = leaf_page[idx + 16];
+  } else if (gt_count == 16) {
+    *out1 = leaf_page[idx+31];
+    *out2 = leaf_page[idx+32+16];
+  } else {
+    *out1 = leaf_page[idx + 16 + (gt_count - 1)];
+    *out2 = leaf_page[idx + 16 + (gt_count - 1) + 1];
   }
 }

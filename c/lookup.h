@@ -19,7 +19,12 @@
 // < end copyright > 
 #include <stdint.h>
 
-void fast_lookup(const uint64_t** internal_pages, const uint64_t num_internal_pages,
-                 const uint64_t* leaf_page,
-                 const uint64_t query,
-                 uint64_t* const out1, uint64_t* const out2);
+void fast_lookup64(const uint64_t** internal_pages, const uint64_t num_internal_pages,
+                   const uint64_t* leaf_page,
+                   const uint64_t query,
+                   uint64_t* const out1, uint64_t* const out2);
+
+void fast_lookup32(const uint32_t** internal_pages, const uint32_t num_internal_pages,
+                   const uint32_t* leaf_page,
+                   const uint32_t query,
+                   uint32_t* const out1, uint32_t* const out2);
