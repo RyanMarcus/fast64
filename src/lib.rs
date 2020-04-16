@@ -105,7 +105,7 @@ fn build_leaf_layer<T: FastKey>(keys: Vec<T>, values: Vec<T>) -> Vec<T> {
 }
 
 fn build_internal_layer<T: FastKey>(prev_layer: &[T]) -> Vec<T> {
-    let step_size = 128 / size_of::<T>();
+    let step_size = CACHE_LINE_SIZE / size_of::<T>();
     assert_eq!(prev_layer.len() % step_size, 0);
     let mut keys = Vec::new();
     let mut indexes = Vec::new();
