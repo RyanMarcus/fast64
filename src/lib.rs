@@ -23,6 +23,10 @@ use std::mem::{drop, size_of};
 use std::ptr::{copy_nonoverlapping};
 use std::slice;
 
+// 64B is the cache line size, but we want to store
+// a full cache line of keys followed by a full cache
+// line of values, so we'll double it and then
+// pack values as if we were filling half a cache line.
 const CACHE_LINE_SIZE: usize = 128;
 
 #[link(name="lookup")]
@@ -377,7 +381,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn small() {
+    fn u64_small() {
         let keys: Vec<u64> = vec![2, 4, 6, 8];
         let values: Vec<u64> = vec![10, 20, 30, 40];
 
@@ -402,6 +406,34 @@ mod tests {
         assert_eq!(tree.fast_lookup(6), (30, 40));
         assert_eq!(tree.fast_lookup(7), (30, 40));
         assert_eq!(tree.fast_lookup(8), (40, std::u64::MAX));
+    }
+
+    #[test]
+    fn u32_small() {
+        let keys: Vec<u32> = vec![2, 4, 6, 8];
+        let values: Vec<u32> = vec![10, 20, 30, 40];
+
+        let tree = FAST::new(keys, values);
+
+        assert_eq!(tree.slow_lookup(0), (0, 10));
+        assert_eq!(tree.slow_lookup(1), (0, 10));
+        assert_eq!(tree.slow_lookup(2), (10, 20));
+        assert_eq!(tree.slow_lookup(3), (10, 20));
+        assert_eq!(tree.slow_lookup(4), (20, 30));
+        assert_eq!(tree.slow_lookup(5), (20, 30));
+        assert_eq!(tree.slow_lookup(6), (30, 40));
+        assert_eq!(tree.slow_lookup(7), (30, 40));
+        assert_eq!(tree.slow_lookup(8), (40, std::u32::MAX));
+
+        assert_eq!(tree.fast_lookup(0), (0, 10));
+        assert_eq!(tree.fast_lookup(1), (0, 10));
+        assert_eq!(tree.fast_lookup(2), (10, 20));
+        assert_eq!(tree.fast_lookup(3), (10, 20));
+        assert_eq!(tree.fast_lookup(4), (20, 30));
+        assert_eq!(tree.fast_lookup(5), (20, 30));
+        assert_eq!(tree.fast_lookup(6), (30, 40));
+        assert_eq!(tree.fast_lookup(7), (30, 40));
+        assert_eq!(tree.fast_lookup(8), (40, std::u32::MAX));
 
     }
     
