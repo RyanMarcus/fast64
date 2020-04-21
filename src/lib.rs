@@ -237,10 +237,10 @@ impl <T: FastKey> FAST<T> {
 
     pub fn size(&self) -> usize {
         let internal_size: usize = self.internal_layers
-            .iter().map(|v| v.len() * size_of::<u64>())
+            .iter().map(|v| v.len() * size_of::<T>())
             .sum();
         
-        return (self.leaf_layer.len() * size_of::<u64>())
+        return (self.leaf_layer.len() * size_of::<T>())
             + internal_size;
     }
 }
