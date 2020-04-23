@@ -40,14 +40,14 @@ int count_greater_eq64(const uint64_t* ptr, const uint64_t query) {
 int count_greater32(const uint32_t* ptr, const uint32_t query) {
   __m512i key = _mm512_set1_epi32(*(int32_t*)&query);
   __m512i page = _mm512_load_si512(ptr);
-  __mmask8 res = _mm512_cmpgt_epu32_mask(key, page);
+  __mmask16 res = _mm512_cmpgt_epu32_mask(key, page);
   return __builtin_popcount(res);
 }
 
 int count_greater_eq32(const uint32_t* ptr, const uint32_t query) {
   __m512i key = _mm512_set1_epi32(*(int32_t*)&query);
   __m512i page = _mm512_load_si512(ptr);
-  __mmask8 res = _mm512_cmpge_epu32_mask(key, page);
+  __mmask16 res = _mm512_cmpge_epu32_mask(key, page);
   return __builtin_popcount(res);
 }
 #endif
@@ -122,7 +122,7 @@ void fast_lookup32(const uint32_t** internal_pages, const uint32_t num_internal_
                    const uint32_t* leaf_page,
                    const uint32_t query,
                    uint32_t* const out1, uint32_t* const out2) {
-  
+
   // go down the tree
   uint64_t idx = 0;
   for (size_t i = 0; i < num_internal_pages; i++) {
