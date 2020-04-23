@@ -21,8 +21,25 @@
 
 
 fn main() {
+    let have_avx512 = is_x86_feature_detected!("avx512f");
+    
+    let avx512_flag = if have_avx512 {
+        "1"
+    } else {
+        "0"
+    };
+
+    let vanilla_flag = if !have_avx512 {
+        "1"
+    } else {
+        "0"
+    };
+
+    
     cc::Build::new()
         .flag("-march=native")
+        .define("AVX512", avx512_flag)
+        .define("VANILLA", vanilla_flag)
         .file("c/lookup.c")
         .compile("lookup");
 }
